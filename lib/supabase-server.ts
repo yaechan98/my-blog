@@ -52,8 +52,8 @@ function validateEnvironmentVariables(): SupabaseConfig {
  * ✅ 2025년 권장 방식: auth() 함수 기반 서버 클라이언트 생성
  * 
  * 특징:
- * - auth() 함수로 서버 사이드 토큰 관리
- * - accessToken 옵션으로 JWT 자동 전달
+ * - accessToken 함수로 JWT 자동 전달 (공식 가이드 방식)
+ * - JWT Template 방식 완전 제거
  * - RLS 정책과 자동 연동 (auth.jwt()->>'sub' 사용)
  * - API 라우트 및 서버 컴포넌트에서 사용
  * 
@@ -67,15 +67,24 @@ export async function createServerSupabaseClient(): Promise<SupabaseClient<Datab
   try {
     // Clerk 인증 정보 비동기적으로 받아오기
     const { getToken } = await auth();
-    const token = await getToken({ template: 'supabase' });
 
     if (process.env.NODE_ENV === 'development') {
-      console.log('🔑 Supabase 서버 클라이언트 토큰:', token ? '✅ 존재' : '❌ 없음');
+      console.log('🔑 Supabase 서버 클라이언트 생성 중...');
     }
 
     const client = createClient<Database>(url, anonKey, {
-      global: {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      // ✅ 공식 가이드 권장 방식: accessToken 함수 사용
+      accessToken: async () => {
+        try {
+          const token = await getToken();
+          if (process.env.NODE_ENV === 'development') {
+            console.log('🔑 Clerk 토큰:', token ? '✅ 존재' : '❌ 없음');
+          }
+          return token;
+        } catch (error) {
+          console.error('❌ 토큰 가져오기 실패:', error);
+          return null;
+        }
       },
       auth: {
         persistSession: false,

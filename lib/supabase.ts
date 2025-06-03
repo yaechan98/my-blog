@@ -14,7 +14,7 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { useSession } from '@clerk/nextjs';
-import { useEffect, useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Database } from '@/types/database.types';
 
 // ========================================
@@ -59,34 +59,31 @@ const config = validateEnvironmentVariables();
  * ✅ 2025년 권장 방식: useSession 기반 클라이언트 생성
  * 
  * 특징:
- * - useSession 훅으로 자동 토큰 관리
- * - accessToken 옵션으로 JWT 자동 전달
+ * - accessToken 함수로 JWT 자동 전달 (공식 가이드 방식)
+ * - Authorization 헤더 방식 완전 제거
  * - RLS 정책과 자동 연동 (auth.jwt()->>'sub' 사용)
  * - 세션 변경 시 자동 토큰 갱신
  */
 export function useSupabaseClient(): SupabaseClient<Database> {
   const { session } = useSession();
-  const [token, setToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    if (session) {
-      session.getToken().then((t: string | null) => {
-        if (isMounted) setToken(t);
-      });
-    } else {
-      setToken(null);
-    }
-    return () => { isMounted = false; };
-  }, [session]);
 
   const supabase = useMemo(() => {
     return createClient<Database>(
       config.url,
       config.anonKey,
       {
-        global: {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        // ✅ 공식 가이드 권장 방식: accessToken 함수 사용
+        accessToken: async () => {
+          try {
+            const token = await session?.getToken();
+            if (process.env.NODE_ENV === 'development') {
+              console.log('🔑 클라이언트 Clerk 토큰:', token ? '✅ 존재' : '❌ 없음');
+            }
+            return token ?? null;
+          } catch (error) {
+            console.error('❌ 클라이언트 토큰 가져오기 실패:', error);
+            return null;
+          }
         },
         auth: {
           persistSession: false,
@@ -94,7 +91,7 @@ export function useSupabaseClient(): SupabaseClient<Database> {
         },
       }
     );
-  }, [token]);
+  }, [session]);
 
   return supabase;
 }
