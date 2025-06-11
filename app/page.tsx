@@ -4,16 +4,16 @@
  * 실제 Supabase 데이터베이스와 연동
  */
 
-import { Suspense } from 'react';
 import { PostCard } from '@/components/blog/post-card';
+import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
-import Link from 'next/link';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
 import { Database } from '@/types/database.types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, User, Eye, ArrowRight } from 'lucide-react';
+import { CalendarDays, Eye, ArrowRight } from 'lucide-react';
 import { SignedIn, SignedOut } from '@clerk/nextjs';
 
 export const dynamic = "force-dynamic";
@@ -126,13 +126,25 @@ export default async function Home() {
       {/* Hero 섹션 */}
       <section className="text-center mb-20">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-purple-600 to-blue-600 bg-clip-text text-transparent">
-            Welcome to My Blog
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-2 bg-gradient-to-r from-primary via-purple-600 to-blue-600 bg-clip-text text-transparent leading-tight relative z-10">
+            <span className="block">Welcome to</span>
+            <span
+              className="block mt-2 relative z-20 px-4 py-2 rounded-xl bg-white/90 inline-block w-fit mx-auto shadow"
+              style={{ boxShadow: '0 2px 16px 0 rgba(0,0,0,0.04)' }}
+            >
+              <span className="bg-gradient-to-r from-primary via-purple-600 to-blue-600 bg-clip-text text-transparent">
+                {`pepolesss's blog`}
+              </span>
+            </span>
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
-            웹 개발, JavaScript, React, Next.js에 관한 최신 기술과 실무 경험을 공유합니다. 
-            함께 성장하는 개발자가 되어보세요.
-          </p>
+          <div className="relative z-10">
+            <p className="text-lg md:text-xl max-w-2xl mx-auto mb-2 leading-relaxed bg-gradient-to-r from-yellow-400 via-blue-300 to-blue-400 bg-clip-text text-transparent font-semibold">
+              게임, 음악, 독서 등 다양한 취미생활을 공유하고 기록하는 공간!
+            </p>
+            <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed bg-gradient-to-r from-yellow-400 via-blue-300 to-blue-400 bg-clip-text text-transparent font-semibold">
+              A place to share various hobbies such as games, music, reading, etc
+            </p>
+          </div>
           
           {/* CTA 버튼들 */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -173,10 +185,13 @@ export default async function Home() {
                   <CardHeader className="p-0">
                     {post.cover_image_url && (
                       <div className="aspect-video overflow-hidden rounded-t-lg">
-                        <img
+                        <Image
                           src={post.cover_image_url}
                           alt={post.title}
+                          width={800}
+                          height={450}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                          priority
                         />
                       </div>
                     )}

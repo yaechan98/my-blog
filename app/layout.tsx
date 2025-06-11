@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/common/header";
 import Footer from "@/components/common/footer";
 import { Providers } from "./providers";
+import { ClerkProvider } from "@clerk/nextjs";
 
 // 폰트 설정 - Inter와 Noto Sans KR 조합
 const inter = Inter({
@@ -110,64 +111,66 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${inter.variable} ${notoSansKR.variable}`}>
-      <head>
-        {/* 구조화된 데이터 - 웹사이트 정보 */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Blog",
-              "name": "My Blog",
-              "description": "웹 개발, JavaScript, React, Next.js에 관한 기술 블로그",
-              "url": process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-              "author": {
-                "@type": "Organization",
-                "name": "My Blog Team"
-              },
-              "publisher": {
-                "@type": "Organization",
+    <ClerkProvider>
+      <html lang="ko" className={`${inter.variable} ${notoSansKR.variable}`}>
+        <head>
+          {/* 구조화된 데이터 - 웹사이트 정보 */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Blog",
                 "name": "My Blog",
-                "logo": {
-                  "@type": "ImageObject",
-                  "url": `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/images/logo.png`
-                }
-              },
-              "inLanguage": "ko-KR"
-            }),
-          }}
-        />
-      </head>
-      <body className="min-h-screen bg-background font-sans antialiased">
-        <Providers>
-          {/* 전체 레이아웃 구조 */}
-          <div className="relative flex min-h-screen flex-col">
-            {/* 헤더 */}
-            <Header />
+                "description": "웹 개발, JavaScript, React, Next.js에 관한 기술 블로그",
+                "url": process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+                "author": {
+                  "@type": "Organization",
+                  "name": "My Blog Team"
+                },
+                "publisher": {
+                  "@type": "Organization",
+                  "name": "My Blog",
+                  "logo": {
+                    "@type": "ImageObject",
+                    "url": `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/images/logo.png`
+                  }
+                },
+                "inLanguage": "ko-KR"
+              }),
+            }}
+          />
+        </head>
+        <body className="min-h-screen bg-background font-sans antialiased">
+          <Providers>
+            {/* 전체 레이아웃 구조 */}
+            <div className="relative flex min-h-screen flex-col">
+              {/* 헤더 */}
+              <Header />
+              
+              {/* 메인 콘텐츠 영역 */}
+              <main className="flex-1">
+                <div className="container mx-auto max-w-7xl px-4">
+                  {children}
+                </div>
+              </main>
+              
+              {/* 푸터 */}
+              <Footer />
+            </div>
             
-            {/* 메인 콘텐츠 영역 */}
-            <main className="flex-1">
-              <div className="container mx-auto max-w-7xl px-4">
-                {children}
-              </div>
-            </main>
-            
-            {/* 푸터 */}
-            <Footer />
-          </div>
-          
-          {/* 접근성을 위한 스킵 링크 */}
-          <div className="sr-only">
-            <a 
-              href="#main-content" 
-              className="absolute left-0 top-0 z-50 -translate-y-full transform bg-primary px-4 py-2 text-primary-foreground transition-transform focus:translate-y-0"
-            >
-              메인 콘텐츠로 건너뛰기
-            </a>
-          </div>
-        </Providers>
-      </body>
-    </html>
+            {/* 접근성을 위한 스킵 링크 */}
+            <div className="sr-only">
+              <a 
+                href="#main-content" 
+                className="absolute left-0 top-0 z-50 -translate-y-full transform bg-primary px-4 py-2 text-primary-foreground transition-transform focus:translate-y-0"
+              >
+                메인 콘텐츠로 건너뛰기
+              </a>
+            </div>
+          </Providers>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
