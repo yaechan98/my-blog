@@ -14,7 +14,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
-import { Database, PostCreateRequest, ApiResponse, PaginatedResponse, PostWithCategory } from '@/types/database.types';
+import { Database, ApiResponse, PaginatedResponse, PostWithCategory } from '@/types/database.types';
 
 // 타입 정의
 type Post = Database['public']['Tables']['posts']['Row'];
@@ -57,7 +57,7 @@ export async function GET(
           { 
             success: false, 
             error: '게시물을 찾을 수 없습니다' 
-          } as ApiResponse,
+          } as ApiResponse<null>, // ✅ 타입 인자 명시
           { status: 404 }
         );
       }
@@ -66,7 +66,7 @@ export async function GET(
         { 
           success: false, 
           error: '게시물을 불러오는데 실패했습니다' 
-        } as ApiResponse,
+        } as ApiResponse<null>,
         { status: 500 }
       );
     }
@@ -86,7 +86,7 @@ export async function GET(
       { 
         success: false, 
         error: '서버 오류가 발생했습니다' 
-      } as ApiResponse,
+      } as ApiResponse<null>,
       { status: 500 }
     );
   }
@@ -110,7 +110,7 @@ export async function PUT(
       return NextResponse.json({
         success: false,
         error: '인증이 필요합니다.'
-      } as ApiResponse, { status: 401 });
+      } as ApiResponse<null>, { status: 401 });
     }
 
     const { id: postId } = await params;
@@ -138,7 +138,7 @@ export async function PUT(
           { 
             success: false, 
             error: '게시물을 찾을 수 없습니다' 
-          } as ApiResponse,
+          } as ApiResponse<null>, // ✅ 타입 인자 명시
           { status: 404 }
         );
       }
@@ -147,7 +147,7 @@ export async function PUT(
         { 
           success: false, 
           error: '게시물을 불러오는데 실패했습니다' 
-        } as ApiResponse,
+        } as ApiResponse<null>,
         { status: 500 }
       );
     }
@@ -159,7 +159,7 @@ export async function PUT(
         { 
           success: false, 
           error: '권한이 없습니다' 
-        } as ApiResponse,
+        } as ApiResponse<null>,
         { status: 403 }
       );
     }
@@ -178,7 +178,7 @@ export async function PUT(
           { 
             success: false, 
             error: '이미 사용 중인 슬러그입니다' 
-          } as ApiResponse,
+          } as ApiResponse<null>,
           { status: 400 }
         );
       }
@@ -208,7 +208,7 @@ export async function PUT(
         { 
           success: false, 
           error: '게시물 수정에 실패했습니다' 
-        } as ApiResponse,
+        } as ApiResponse<null>,
         { status: 500 }
       );
     }
@@ -218,7 +218,6 @@ export async function PUT(
     const response: ApiResponse<PostWithCategory | null> = {
       success: true,
       data: post ? (post as PostWithCategory) : null,
-      message: '게시물이 성공적으로 수정되었습니다'
     };
 
     return NextResponse.json(response);
@@ -229,7 +228,7 @@ export async function PUT(
       { 
         success: false, 
         error: '서버 오류가 발생했습니다' 
-      } as ApiResponse,
+      } as ApiResponse<null>,
       { status: 500 }
     );
   }
@@ -255,7 +254,7 @@ export async function DELETE(
         { 
           success: false, 
           error: '인증이 필요합니다' 
-        } as ApiResponse,
+        } as ApiResponse<null>,
         { status: 401 }
       );
     }
@@ -280,7 +279,7 @@ export async function DELETE(
           { 
             success: false, 
             error: '게시물을 찾을 수 없습니다' 
-          } as ApiResponse,
+          } as ApiResponse<null>, // ✅ 타입 인자 명시
           { status: 404 }
         );
       }
@@ -289,7 +288,7 @@ export async function DELETE(
         { 
           success: false, 
           error: '게시물을 불러오는데 실패했습니다' 
-        } as ApiResponse,
+        } as ApiResponse<null>,
         { status: 500 }
       );
     }
@@ -301,7 +300,7 @@ export async function DELETE(
         { 
           success: false, 
           error: '권한이 없습니다' 
-        } as ApiResponse,
+        } as ApiResponse<null>,
         { status: 403 }
       );
     }
@@ -318,16 +317,15 @@ export async function DELETE(
         { 
           success: false, 
           error: '게시물 삭제에 실패했습니다' 
-        } as ApiResponse,
+        } as ApiResponse<null>,
         { status: 500 }
       );
     }
 
     console.log('✅ 게시물 삭제 성공:', existingPost.title);
 
-    const response: ApiResponse = {
+    const response: ApiResponse<null> = {
       success: true,
-      message: '게시물이 성공적으로 삭제되었습니다'
     };
 
     return NextResponse.json(response);
@@ -338,8 +336,8 @@ export async function DELETE(
       { 
         success: false, 
         error: '서버 오류가 발생했습니다' 
-      } as ApiResponse,
+      } as ApiResponse<null>,
       { status: 500 }
     );
   }
-} 
+}

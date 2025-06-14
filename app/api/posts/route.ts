@@ -11,7 +11,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
-import { Database, PostCreateRequest, ApiResponse, PaginatedResponse } from '@/types/database.types';
+import { Database, ApiResponse, PaginatedResponse } from '@/types/database.types';
 
 // 타입 정의
 type Post = Database['public']['Tables']['posts']['Row'];
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: '게시물을 조회할 수 없습니다.'
-      } as ApiResponse, { status: 500 });
+      } as ApiResponse<null>, { status: 500 });
     }
 
     // 전체 게시물 수 조회
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: '게시물 수를 조회할 수 없습니다.'
-      } as ApiResponse, { status: 500 });
+      } as ApiResponse<null>, { status: 500 });
     }
 
     const totalPages = Math.ceil((count || 0) / limit);
@@ -73,20 +73,18 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: posts,
-      pagination: {
-        page,
-        limit,
-        total: count || 0,
-        totalPages
-      }
-    } as PaginatedResponse<Post>);
+      total: count || 0,
+      page,
+      pageSize: limit,
+      totalPages
+    } as PaginatedResponse<Post> & { success: boolean; totalPages: number });
 
   } catch (error) {
     console.error('❌ GET /api/posts 오류:', error);
     return NextResponse.json({
       success: false,
       error: '서버 오류가 발생했습니다.'
-    } as ApiResponse, { status: 500 });
+    } as ApiResponse<null>, { status: 500 });
   }
 }
 
@@ -102,20 +100,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: '인증이 필요합니다.'
-      } as ApiResponse, { status: 401 });
+      } as ApiResponse<null>, { status: 401 });
     }
 
     console.log(`🔑 인증된 사용자 ID: ${userId}`);
 
-    const body: PostCreateRequest = await request.json();
-    const { title, content, excerpt, category_id, status = 'published', featured_image } = body;
+    const body: PostInsert = await request.json();
+    const { title, content, excerpt, category_id, status = 'published', cover_image_url } = body;
 
     // 필수 필드 검증
     if (!title || !content) {
       return NextResponse.json({
         success: false,
         error: '제목과 내용은 필수입니다.'
-      } as ApiResponse, { status: 400 });
+      } as ApiResponse<null>, { status: 400 });
     }
 
     // slug 생성 (제목 기반)
@@ -138,7 +136,7 @@ export async function POST(request: NextRequest) {
       author_id: userId,
       category_id: category_id || null,
       status,
-      cover_image_url: featured_image || null,
+      cover_image_url: cover_image_url || null,
       view_count: 0
     };
 
@@ -155,7 +153,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: '게시물 생성에 실패했습니다: ' + error.message
-      } as ApiResponse, { status: 500 });
+      } as ApiResponse<null>, { status: 500 });
     }
 
     console.log('✅ 게시물 생성 성공:', post);
@@ -171,6 +169,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: '서버 오류가 발생했습니다.'
-    } as ApiResponse, { status: 500 });
+    } as ApiResponse<null>, { status: 500 });
   }
 }

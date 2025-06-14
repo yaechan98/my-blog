@@ -156,7 +156,7 @@ function PostHeader({ post, isAuthor, likeCount }: { post: PostWithCategory; isA
       {/* 관리자 액션 버튼 (작성자 본인에게만 표시) */}
       {isAuthor && (
         <div className="mb-6">
-          <PostAdminActions postId={post.id} postSlug={post.slug} />
+          <PostAdminActions postId={String(post.id)} postSlug={post.slug} />
         </div>
       )}
 
@@ -189,7 +189,7 @@ function PostHeader({ post, isAuthor, likeCount }: { post: PostWithCategory; isA
         {/* 좋아요 버튼 */}
         <div className="flex items-center">
           <LikeButton
-            postId={post.id}
+            postId={String(post.id)}
             initialLikes={likeCount}
             size="lg"
             showCount={true}
@@ -243,7 +243,7 @@ function PostContent({ post, likeCount }: { post: PostWithCategory; likeCount: n
           <div className="flex items-center gap-4">
             <span className="text-lg font-semibold">이 글이 도움이 되셨나요?</span>
             <LikeButton
-              postId={post.id}
+              postId={String(post.id)}
               initialLikes={likeCount}
               size="lg"
               showCount={true}
@@ -408,4 +408,4 @@ export default async function PostDetailPage({ params }: PageProps) {
     console.error('게시물 조회 중 오류 발생:', error);
     notFound();
   }
-} 
+}

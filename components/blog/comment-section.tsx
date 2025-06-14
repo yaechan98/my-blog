@@ -263,7 +263,7 @@ function CommentList({
           }}          onEdit={onEditStart}
           onUpdate={onCommentUpdated}
           onDelete={handleCommentDelete}
-          isEditing={editingCommentId === comment.id}
+          isEditing={editingCommentId === String(comment.id)}
           onEditCancel={onEditCancel}
         />
       ))}
@@ -329,7 +329,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
   // 댓글 삭제 처리
   const handleCommentDeleted = (commentId: string) => {
     setComments(prevComments => 
-      prevComments.filter(comment => comment.id !== commentId)
+      prevComments.filter(comment => String(comment.id) !== commentId)
     );
     // 편집 중이던 댓글이 삭제된 경우 편집 모드 해제
     if (editingCommentId === commentId) {

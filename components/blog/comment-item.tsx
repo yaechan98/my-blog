@@ -138,7 +138,7 @@ export default function CommentItem({
    * 편집 시작 핸들러
    */
   const handleEdit = () => {
-    onEdit?.(comment.id);
+    onEdit?.(String(comment.id));
   };
 
   /**
@@ -207,7 +207,7 @@ export default function CommentItem({
               variant="ghost"
               size="sm"
               className="h-auto p-1 text-gray-500 hover:text-red-500 hover:bg-red-50 transition-colors"
-              onClick={() => onLike?.(comment.id)}
+              onClick={() => onLike?.(String(comment.id))}
             >
               <Heart className="w-4 h-4 mr-1" />
               <span className="text-xs">좋아요</span>
@@ -218,7 +218,7 @@ export default function CommentItem({
               variant="ghost"
               size="sm"
               className="h-auto p-1 text-gray-500 hover:text-blue-500 hover:bg-blue-50 transition-colors"
-              onClick={() => onReply?.(comment.id)}
+              onClick={() => onReply?.(String(comment.id))}
             >
               <MessageSquare className="w-4 h-4 mr-1" />
               <span className="text-xs">답글</span>
@@ -260,7 +260,7 @@ export default function CommentItem({
                       <AlertDialogCancel>취소</AlertDialogCancel>
                       <AlertDialogAction
                         className="bg-red-500 hover:bg-red-600"
-                        onClick={() => onDelete?.(comment.id)}
+                        onClick={() => onDelete?.(String(comment.id))}
                       >
                         삭제
                       </AlertDialogAction>
@@ -274,9 +274,10 @@ export default function CommentItem({
                 variant="ghost"
                 size="sm"
                 className="h-auto p-1 text-gray-500 hover:text-orange-500 hover:bg-orange-50 transition-colors opacity-0 group-hover:opacity-100"
-                onClick={() => onReport?.(comment.id)}
+                onClick={() => onReport?.(String(comment.id))}
               >
-                <Flag className="w-4 h-4 mr-1" />                <span className="text-xs">신고</span>
+                <Flag className="w-4 h-4 mr-1" />
+                <span className="text-xs">신고</span>
               </Button>
             )}
             </div>
@@ -285,4 +286,4 @@ export default function CommentItem({
       </div>
     </div>
   );
-} 
+}

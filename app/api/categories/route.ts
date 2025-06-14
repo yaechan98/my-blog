@@ -45,7 +45,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         { 
           success: false, 
           error: '카테고리를 불러오는데 실패했습니다' 
-        } as ApiResponse,
+        } as ApiResponse<null>, // ✅ 타입 인자 명시
         { status: 500 }
       );
     }
@@ -90,7 +90,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       { 
         success: false, 
         error: '서버 오류가 발생했습니다' 
-      } as ApiResponse,
+      } as ApiResponse<null>,
       { status: 500 }
     );
   }
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         { 
           success: false, 
           error: '인증이 필요합니다' 
-        } as ApiResponse,
+        } as ApiResponse<null>,
         { status: 401 }
       );
     }
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         { 
           success: false, 
           error: '카테고리 이름과 슬러그는 필수입니다' 
-        } as ApiResponse,
+        } as ApiResponse<null>,
         { status: 400 }
       );
     }
@@ -154,7 +154,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         { 
           success: false, 
           error: '이미 사용 중인 슬러그입니다' 
-        } as ApiResponse,
+        } as ApiResponse<null>,
         { status: 400 }
       );
     }
@@ -171,7 +171,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         { 
           success: false, 
           error: '이미 사용 중인 카테고리 이름입니다' 
-        } as ApiResponse,
+        } as ApiResponse<null>,
         { status: 400 }
       );
     }
@@ -199,7 +199,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         { 
           success: false, 
           error: `카테고리 생성에 실패했습니다: ${error.message}` 
-        } as ApiResponse,
+        } as ApiResponse<null>,
         { status: 500 }
       );
     }
@@ -208,8 +208,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const response: ApiResponse<Category> = {
       success: true,
-      data: category,
-      message: '카테고리가 성공적으로 생성되었습니다'
+      data: category
     };
 
     return NextResponse.json(response, { status: 201 });
@@ -220,8 +219,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { 
         success: false, 
         error: '서버 오류가 발생했습니다' 
-      } as ApiResponse,
+      } as ApiResponse<null>,
       { status: 500 }
     );
   }
-} 
+}
+
+// 게시물에서 카테고리 추출
+function extractCategoryFromPost(post: any): string | null {
+  const category = post?.category;
+  return category?.id != null ? String(category.id) : null;
+}

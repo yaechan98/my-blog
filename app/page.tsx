@@ -200,10 +200,13 @@ export default async function Home() {
                     <div className="space-y-3">
                       {/* 카테고리 */}
                       {post.categories && (
-                        <Badge 
-                          variant="secondary" 
+                        <Badge
+                          variant="secondary"
                           className="text-xs"
-                          style={{ backgroundColor: `${post.categories.color}20`, color: post.categories.color }}
+                          style={{
+                            backgroundColor: `${post.categories.color ?? '#000'}20`,
+                            color: post.categories.color ?? '#000'
+                          }}
                         >
                           {post.categories.name}
                         </Badge>
@@ -295,7 +298,7 @@ export default async function Home() {
                   <Card className="text-center p-6 hover:shadow-md transition-all duration-200 group-hover:scale-105">
                     <div
                       className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center text-white font-bold"
-                      style={{ backgroundColor: category.color }}
+                      style={{ backgroundColor: category.color ?? '#000' }} // 기본값 '#000' 추가
                     >
                       {category.name.charAt(0)}
                     </div>

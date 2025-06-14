@@ -354,13 +354,11 @@ async function PostsList({ searchParams }: { searchParams: any }) {
 
     // Category 타입의 빈 객체
     const EMPTY_CATEGORY: Category = {
-      id: '',
+      id: 0,
       name: '',
       slug: '',
       description: null,
       color: '',
-      created_at: '',
-      updated_at: '',
     };    // PostCard 컴포넌트에 맞는 데이터 형식으로 변환 (좋아요 수 포함)
     const transformedPosts = (postsWithLikes || []).map(post => ({
       id: post.id,
@@ -382,8 +380,6 @@ async function PostsList({ searchParams }: { searchParams: any }) {
                 slug: (post.categories[0] as any).slug,
                 color: (post.categories[0] as any).color,
                 description: (post.categories[0] as any).description ?? null,
-                created_at: (post.categories[0] as any).created_at ?? '',
-                updated_at: (post.categories[0] as any).updated_at ?? '',
               }
             : EMPTY_CATEGORY)
         : post.categories
@@ -393,8 +389,6 @@ async function PostsList({ searchParams }: { searchParams: any }) {
             slug: (post.categories as any).slug,
             color: (post.categories as any).color,
             description: (post.categories as any).description ?? null,
-            created_at: (post.categories as any).created_at ?? '',
-            updated_at: (post.categories as any).updated_at ?? '',
           }
         : EMPTY_CATEGORY,
       publishedAt: post.created_at,
@@ -589,4 +583,4 @@ export default async function PostsPage({ searchParams }: PageProps) {
       </Suspense>
     </div>
   );
-} 
+}

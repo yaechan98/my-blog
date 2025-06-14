@@ -68,7 +68,7 @@ export async function GET(  request: NextRequest,
           { 
             success: false, 
             error: '게시물을 찾을 수 없습니다' 
-          } as ApiResponse,
+          } as ApiResponse<null>, // ✅ 타입 인자 명시
           { status: 404 }
         );
       }
@@ -77,7 +77,7 @@ export async function GET(  request: NextRequest,
         { 
           success: false, 
           error: '게시물을 불러오는데 실패했습니다' 
-        } as ApiResponse,
+        } as ApiResponse<null>, // ✅ 타입 인자 명시
         { status: 500 }
       );
     }
@@ -106,8 +106,6 @@ export async function GET(  request: NextRequest,
                 slug: (post.categories[0] as any).slug,
                 description: (post.categories[0] as any).description ?? null,
                 color: (post.categories[0] as any).color,
-                created_at: (post.categories[0] as any).created_at ?? '',
-                updated_at: (post.categories[0] as any).updated_at ?? '',
               }
             : null)
         : post.categories
@@ -117,8 +115,6 @@ export async function GET(  request: NextRequest,
             slug: (post.categories as any).slug,
             description: (post.categories as any).description ?? null,
             color: (post.categories as any).color,
-            created_at: (post.categories as any).created_at ?? '',
-            updated_at: (post.categories as any).updated_at ?? '',
           }
         : null,
     };
@@ -136,8 +132,8 @@ export async function GET(  request: NextRequest,
       { 
         success: false, 
         error: '서버 오류가 발생했습니다' 
-      } as ApiResponse,
+      } as ApiResponse<null>,
       { status: 500 }
     );
   }
-} 
+}

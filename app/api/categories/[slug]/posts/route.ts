@@ -38,25 +38,17 @@ function isPostWithCategories(post: unknown): post is PostWithCategories {
   return typeof post === 'object' && post !== null;
 }
 
-function extractCategoryFromPost(post: PostWithCategories): Category | null {
-  if (!post.categories) return null;
-  
-  // categories가 배열인 경우 첫 번째 요소 반환
-  if (Array.isArray(post.categories)) {
-    return post.categories[0] || null;
-  }
-  
-  // categories가 단일 객체인 경우 그대로 반환
-  return post.categories;
+function extractCategoryFromPost(post: any): string | null {
+  const category = post?.category;
+  return category?.id != null ? String(category.id) : null;
 }
 
 function extractCategoryIdFromPost(post: PostWithCategories): string | null {
   // 직접적인 category_id가 있는 경우
   if (post.category_id) return post.category_id;
-  
+
   // categories에서 추출
-  const category = extractCategoryFromPost(post);
-  return category?.id || null;
+  return extractCategoryFromPost(post);
 }
 
 // ========================================
@@ -97,7 +89,7 @@ export async function GET(
           { 
             success: false, 
             error: '카테고리를 찾을 수 없습니다' 
-          } as ApiResponse,
+          } as ApiResponse<null>, // ✅ 타입 인자 명시
           { status: 404 }
         );
       }
@@ -106,7 +98,7 @@ export async function GET(
         { 
           success: false, 
           error: '카테고리를 불러오는데 실패했습니다' 
-        } as ApiResponse,
+        } as ApiResponse<null>, // ✅ 타입 인자 명시
         { status: 500 }
       );
     }
@@ -145,7 +137,7 @@ export async function GET(
         { 
           success: false, 
           error: '게시물을 불러오는데 실패했습니다' 
-        } as ApiResponse,
+        } as ApiResponse<null>, // ✅ 타입 인자 명시
         { status: 500 }
       );
     }
@@ -184,7 +176,7 @@ export async function GET(
         : (post as any).categories ?? null,
     }));
 
-    const response: PaginatedResponse<Post> & { category: Category } = {
+    const response = {
       success: true,
       data: normalizedPosts,
       category: category,
@@ -204,7 +196,7 @@ export async function GET(
       { 
         success: false, 
         error: '서버 오류가 발생했습니다' 
-      } as ApiResponse,
+      } as ApiResponse<null>, // ✅ 타입 인자 명시
       { status: 500 }
     );
   }
