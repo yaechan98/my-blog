@@ -63,8 +63,7 @@ async function getLatestPosts(): Promise<PostWithCategory[]> {
           slug,
           color,
           description,
-          created_at,
-          updated_at
+          created_at
         )
       `)
       .eq('status', 'published')
@@ -77,12 +76,14 @@ async function getLatestPosts(): Promise<PostWithCategory[]> {
     }
 
     console.log(`✅ 최신 게시물 ${posts?.length || 0}개 조회 성공`);
-    return (posts || []).map(post => ({
-      ...post,
-      categories: Array.isArray(post.categories)
-        ? (post.categories[0] || null)
-        : post.categories ?? null,
-    }));
+    return (posts || [])
+      .filter(post => typeof post === 'object' && post !== null)
+      .map(post => ({
+        ...post,
+        categories: Array.isArray(post.categories)
+          ? (post.categories[0] || null)
+          : post.categories ?? null,
+      }));
   } catch (error) {
     console.error('최신 게시물 조회 중 오류:', error);
     return [];
